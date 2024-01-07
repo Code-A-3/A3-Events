@@ -1,0 +1,44 @@
+{% extends "events/base.html" %}
+
+{% block content %}
+    <center>
+    {% if venue.owner %}
+        <h1><strong style="font-size: 4rem;">{{venue}}</strong></h1>
+    {% else %}
+        <h1><strong style="font-size: 4rem;">{{venue}}<kbd style="color: red;">ON HOLD!</kbd></strong></h1>
+    {% endif %}
+    </center>
+    <br>
+    <br>
+    <div class="card">
+        <div class="card-header" style="text-transform: uppercase">
+            <strong>{{venue.city}}</strong>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title" style="text-transform: capitalize"><strong>Province: </strong>{{venue.province}}</h5>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item" style="text-transform: capitalize">
+                    <strong>Owner: </strong>{{venue.owner}}
+                </li>
+                <li class="nav-item" style="text-transform: capitalize">
+                    <strong>Address: </strong>{{venue.address}}
+                </li>
+                <li class="nav-item" style="text-transform: capitalize">
+                    <strong>Phone: </strong>{{venue.phone}}
+                </li>
+                <li class="nav-item">
+                    <strong>Web: </strong><a href="{{venue.web}}" class="link-secondary">{{venue.web}}</a>
+                </li>
+                <li class="nav-item">
+                    <strong>E-mail: </strong>{{venue.email}}
+                </li>
+            </ul>
+        </div>
+        <div class="card-footer">
+            <a href="{% url 'venue-events' venue.id %}" class="btn btn-outline-secondary">Show Events</a>
+            {% if user.is_superuser %}
+                <a href="/admin/events/venue/{{venue.id}}/change/" class="btn btn-outline-primary">Edit...</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock%}

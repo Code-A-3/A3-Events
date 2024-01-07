@@ -1,0 +1,33 @@
+{% extends "events/base.html" %}
+
+{% block content %}
+    <center>
+    {% if form.errors %}
+        {% for field in form %}
+            {% if field.errors %}
+                <div>
+                    <div><kbd style="font-size: 1rem; color: crimson;">{{field.label}}:</kbd></div>
+                    {% for error in field.errors %}
+                        <div><kbd style="font-size: 1rem;">{{ error|escape }}</kbd></div>
+                    {% endfor %}
+                </div>
+                <br>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    <h1>Create Account...</h1>
+    <br>
+    <br>
+    <form action="{% url 'register-user' %}" method="POST">
+        {%csrf_token%}
+        <div class="mb-3">
+            {% for field in form %}
+                <label class="form-label">{{ field.label_tag }}</label>
+                <p style="max-width: 40rem;">{{ field }}</p>
+            {% endfor %}
+            <br>
+            <input type="submit" value="Submit" class="btn btn-outline-secondary">
+        </div>
+    </form>
+    </center>
+    {% endblock%}

@@ -1,0 +1,57 @@
+{% extends "events/base.html" %}
+
+{% block content %}
+    <center>
+    {% if events_list %}
+        <h1>Confirmation Pending Events:</h1>
+        <br>
+        <form action="" method="post">
+            {% csrf_token %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">EVENT</th>
+                        <th scope="col">DATE</th>
+                        <th scope="col">VENUE</th>
+                        <th scope="col">MANAGER</th>
+                        <th scope="col">STATUS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events_list %}
+                        <tr>
+                            <th scope="row">
+                                <a href="{% url 'show-event' event.id %}" class="link-secondary">{{event}}</a>
+                            </th>
+                            <td>
+                                {{event.event_date}}
+                            </td>
+                            <td>
+                                {{event.venue}}
+                            </td>
+                            <td>
+                                {{event.manager}}
+                            </td>
+                            <td>
+                                <select name="confirmation" value={{event.id}}>
+                                {% for option in event.confirm_choices %}
+                                    <option value="{{event.id}}, {{option}}" 
+                                        {% if option == event.confirmed %} 
+                                            selected="selected"
+                                        {% endif %}>{{ option }}</option>
+                                {% endfor %}
+                                </select>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <br>
+            <input type="submit" value="Submit" class="btn btn-primary btn-lg">
+        </form>
+    {% else %}
+        <strong><kbd style="color: red;">No Event to Show!</kbd></strong>
+        <br>
+    {% endif %}
+    </center>
+{% endblock%}

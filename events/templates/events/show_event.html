@@ -1,0 +1,95 @@
+{% extends "events/base.html" %}
+
+{% block content %}
+    <center>
+    {% if event.confirmed != "True" %}
+        <h1><strong style="font-size: 4rem;">{{event}} <br> <kbd style="color: red;">Waiting Approval</kbd></strong></h1>
+    {% elif not event.Validity %}
+        <h1><strong style="font-size: 4rem;">{{event}} <br> <kbd style="color: red;">PASSED!</kbd></strong></h1>
+    {% elif event.manager == None or not event.venue.owner or not event.venue %}
+        <h1><strong style="font-size: 4rem;">{{event}} <br> <kbd style="color: red;">ON HOLD!</kbd></strong></h1>
+    {% else %}
+        <h1><strong style="font-size: 4rem;">{{event}}</strong></h1>
+    {% endif %}
+    {% if participate %}
+        <h1><strong style="font-size: 4rem;"><kbd style="color: #007BFF;">YOU ARE Attending...</kbd></strong></h1>
+    {% endif %}
+    {% if event.event_image %}
+        <br>
+        <img src={{event.event_image.url}} class="rounded" style="width: 70%;">
+        <br>
+    {% endif %}
+    </center>
+    <br>
+    <br>
+    <!-- Delete Modal -->
+    <div class="modal fade" id="staticBackdrop-del" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Are you sure?</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure to delete {{event}}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <a class="btn btn-secondary" href="{% url 'del-event' event.id %}">Yes</a>
+            </div>
+          </div>
+        </div>
+    </div>
+    <!-- end of Delete Modal -->
+    <div class="card">
+        <div class="card-header" style="text-transform: uppercase">
+            {% if event.venue %}
+                <a href="{% url 'show-venue' event.venue.id %}" class="link-light" style="font-size: 2rem;"><strong>{{event.venue}}</strong></a>
+            {% else %}
+                <strong>Venue Removed</strong>
+            {% endif %}
+            </div>
+        <div class="card-body">
+            <h5 class="card-title" style="text-transform: capitalize">{{event.event_date}}</h5>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item" style="text-transform: capitalize">
+                    {% if event.manager == None %}
+                    <strong>By:</strong> Anonymous
+                    {% else %}
+                    <strong>By:</strong> {{event.manager}}
+                    {% endif %}
+                </li>
+                <br>
+                <li class="nav-item" style="text-transform: capitalize">
+                    <strong>Address:</strong>
+                    {{event.venue.city}} / {{event.venue.province}}
+                </li>
+                <li class="nav-item">
+                    <strong>Web: </strong><a href="{{venue.web}}" class="link-secondary">{{event.venue.web}}</a>
+                </li>
+                <br>
+                <li class="nav-item" style="text-transform: capitalize">
+                    <strong>Attending:</strong> {{event.participants.count}}
+                </li>
+                <br>
+                <li class="nav-item">
+                    <strong>Details:</strong>
+                    <br>
+                    <textarea class="form-control" rows="10" readonly>{{event.description}}</textarea>
+                </li>
+            </ul>
+        </div>
+        <div class="card-footer">
+            {% if participate %}
+                <a href="{% url 'leave-event' event.id %}" class="btn btn-danger btn-lg">Leave Event!</a>
+            {% else %}
+                <a href="{% url 'join-event' event.id %}" class="btn btn-primary btn-lg">Join!..</a>
+            {% endif %}
+            {% if user == event.manager or user.is_superuser %}
+                <a href="{% url 'mod-event' event.id %}" class="btn btn-primary btn-lg">Modify</a>
+                <a class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#staticBackdrop-del">Delete</a>
+            {% endif %}
+        </div>
+            
+    </div>
+{% endblock%}

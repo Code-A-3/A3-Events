@@ -1,0 +1,148 @@
+{% extends "events/base.html" %}
+
+{% block content %}
+    <center>
+    {% if search_for %}
+        <h1>Results In Venues for <kbd>{{search_for}}</kbd>...</h1>
+        <br>
+        {% if venues %}
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 g-4">
+                {% for venue in venues%}
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-header" style="text-transform: uppercase">
+                                {% if venue.owner%}
+                                <strong>{{venue}}</strong>
+                                {% else %}
+                                <strong>{{venue}} <kbd style="color: red;">ON HOLD!</kbd></strong>
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <p class="card-title" style="text-transform: capitalize">{{venue.city}} / {{venue.province}}</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="{% url 'show-venue' venue.id %}" class="btn btn-outline-secondary">Details...</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <br>
+            <div class="dropdown-center dropdown">
+                <button class="btn btn-secondary dropdown-toggle btn-sm" style="margin: 0.5rem;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Page {{venues.number}}/{{venues.paginator.num_pages}}
+                </button>
+                <ul class="dropdown-menu">
+                    {% for i in range_v %}
+                        <li><a class="dropdown-item" href="?page_v={{i}}&page_e={{events.number}}&search_for={{ search_for|urlencode }}">{{i}}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% if venues.has_previous == False and venues.has_next == True %}
+                <a href="" class="btn btn-secondary btn-sm disabled" style="width: 4rem;">&laquo First</a>
+                <a href="" class="btn btn-secondary btn-sm disabled" style="width: 4rem;">Prev</a>
+                <a href="?page_v={{venues.next_page_number}}&page_e={{events.number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 4rem;">Next</a>
+                <a href="?page_v={{venues.paginator.num_pages}}&page_e={{events.number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 4rem;">Last &raquo</a>
+            {% elif venues.has_next == False and venues.has_previous == True %}
+                <a href="?page_v=1&page_e={{events.number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 4rem;">&laquo First</a>
+                <a href="?page_v={{venues.previous_page_number}}&page_e={{events.number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 4rem;">Prev</a>
+                <a href="" class="btn btn-secondary btn-sm disabled" style="width: 4rem;">Next</a>
+                <a href="" class="btn btn-secondary btn-sm disabled" style="width: 4rem;">Last &raquo</a>
+            {% elif venues.has_next == False and venues.has_previous == False %}
+                <a href="" class="btn btn-secondary btn-sm disabled" style="width: 4rem;">&laquo First</a>
+                <a href="" class="btn btn-secondary btn-sm disabled" style="width: 4rem;">Prev</a>
+                <a href="" class="btn btn-secondary btn-sm disabled" style="width: 4rem;">Next</a>
+                <a href="" class="btn btn-secondary btn-sm disabled" style="width: 4rem;">Last &raquo</a>
+            {% else %}
+                <a href="?page_v=1&page_e={{events.number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 4rem;">&laquo First</a>
+                <a href="?page_v={{venues.previous_page_number}}&page_e={{events.number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 4rem;">Prev</a>
+                <a href="?page_v={{venues.next_page_number}}&page_e={{events.number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 4rem;">Next</a>
+                <a href="?page_v={{venues.paginator.num_pages}}&page_e={{events.number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 4rem;">Last &raquo</a>
+            {% endif %}
+        {% else %}
+            No result...
+        {% endif %}
+        <br>
+        <br>
+        <hr>
+        <br>
+        <h1>Results In Events for <kbd>{{search_for}}</kbd>...</h1>
+        <br>
+        {% if events %}
+            <div class="row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 g-4">
+                {% for event in events %}
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-header" style="text-transform: uppercase">
+                                {% if event.manager == None or not event.venue.owner or not event.venue %}
+                                    <strong>{{event}} <br><kbd style="color: red;">ON HOLD!</kbd></strong>
+                                {% else %}
+                                    <strong>{{event}}</strong>
+                                {% endif %}
+                                {% if event.event_image %}
+                                    <br>
+                                    <img src={{event.event_image.url}} class="rounded">
+                                    <br>
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                {% if event.venue %}
+                                    <h5 class="card-title" style="text-transform: capitalize">{{event.venue}} / {{event.venue.city}}</h5>
+                                {% else %}
+                                    <h5 class="card-title" style="text-transform: capitalize">Venue Removed</h5>
+                                {% endif %}
+                                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                    <li class="nav-item" style="text-transform: capitalize">
+                                        {{event.event_date}}
+                                    </li>
+                                    <li class="nav-item" style="text-transform: capitalize">
+                                        Attending: {{event.participants.count}}
+                                    </li>
+                                </ul>
+                                <br>
+                                <a href="{% url 'show-event' event.id %}" class="btn btn-outline-secondary">Details...</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <br>
+            <div class="dropdown-center dropdown">
+                <button class="btn btn-secondary dropdown-toggle btn-sm" style="margin: 0.5rem;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Page {{events.number}}/{{events.paginator.num_pages}}
+                </button>
+                <ul class="dropdown-menu">
+                    {% for i in range_e %}
+                        <li><a class="dropdown-item" href="?page_v={{venues.number}}&page_e={{i}}&search_for={{ search_for|urlencode }}">{{i}}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% if events.has_previous == False and events.has_next == True %}
+                <a href="" class="btn btn-secondary btn-sm disabled" style="width: 4rem;">&laquo First</a>
+                <a href="" class="btn btn-secondary btn-sm disabled" style="width: 4rem;">Prev</a>
+                <a href="?page_e={{events.next_page_number}}&page_v={{venues.number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 4rem;">Next</a>
+                <a href="?page_e={{events.paginator.num_pages}}&page_v={{venues.number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 4rem;">Last &raquo</a>
+            {% elif events.has_next == False and events.has_previous == True %}
+                <a href="?page_e=1&page_v={{venues.number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 4rem;">&laquo First</a>
+                <a href="?page_e={{events.previous_page_number}}&page_v={{venues.number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 4rem;">Prev</a>
+                <a href="" class="btn btn-secondary btn-sm disabled" style="width: 4rem;">Next</a>
+                <a href="" class="btn btn-secondary btn-sm disabled" style="width: 4rem;">Last &raquo</a>
+            {% elif events.has_next == False and events.has_previous == False %}
+                <a href="" class="btn btn-secondary btn-sm disabled" style="width: 4rem;">&laquo First</a>
+                <a href="" class="btn btn-secondary btn-sm disabled" style="width: 4rem;">Prev</a>
+                <a href="" class="btn btn-secondary btn-sm disabled" style="width: 4rem;">Next</a>
+                <a href="" class="btn btn-secondary btn-sm disabled" style="width: 4rem;">Last &raquo</a>
+            {% else %}
+                <a href="?page_e=1&page_v={{venues.number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 4rem;">&laquo First</a>
+                <a href="?page_e={{events.previous_page_number}}&page_v={{venues.number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 4rem;">Prev</a>
+                <a href="?page_e={{events.next_page_number}}&page_v={{venues.number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 4rem;">Next</a>
+                <a href="?page_e={{events.paginator.num_pages}}&page_v={{venues.number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 4rem;">Last &raquo</a>
+            {% endif %}
+        {% else %}
+            No result...
+        {% endif %}
+    {% else %}
+        <h1>Please type a seach data into search box...</h1>
+    {% endif %}
+    </center>
+{% endblock%}

@@ -1,0 +1,22 @@
+{% extends "events/base.html" %}
+
+{% block content %}
+    <center>
+    <h1>Login...</h1>
+    <br>
+    <br>
+    <form action="" method="POST">
+        {%csrf_token%} <!-- standard application for hack security. learn this. -->
+        <div class="mb-3">
+            <label for="login_username" class="form-label">User Name</label>
+            <input type="text" class="form-control" name="username" id="login_username" aria-describedby="emailHelp" style="max-width: 40rem;">
+        </div>
+        <div class="mb-3">
+            <label for="login_pass" class="form-label">Password</label>
+            <input type="password" class="form-control" name="password" id="login_pass" style="max-width: 40rem;">
+        </div>
+        <br>
+        <button type="submit" class="btn btn-outline-secondary">Submit</button>
+    </form>
+    </center>
+{% endblock%}

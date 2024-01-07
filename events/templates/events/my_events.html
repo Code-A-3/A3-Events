@@ -1,0 +1,83 @@
+{% extends "events/base.html" %}
+
+{% block content %}
+    <center>
+        <h1>Events of <kbd>{{user}}</kbd></h1>
+    </center>
+    <br>
+    <div class="row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 g-4">
+        {% for event in event_list %}
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header" style="text-transform: uppercase">
+                        {% if event.confirmed != "True" %}
+                            <strong>{{event}} <br> <kbd style="color: red;">Waiting Approval...</kbd></strong>
+                        {% elif not event.Validity %}
+                            <strong>{{event}} <br> <kbd style="color: red;">PASSED!</kbd></strong>
+                        {% elif event.manager == None or not event.venue.owner or not event.venue %}
+                            <strong>{{event}} <br> <kbd style="color: red;">ON HOLD!</kbd></strong>
+                        {% else %}
+                            <strong>{{event}}</strong>
+                        {% endif %}
+                        {% if event.event_image %}
+                            <br>
+                            <img src={{event.event_image.url}} class="rounded">
+                            <br>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        {% if event.venue %}
+                            <h5 class="card-title" style="text-transform: capitalize">{{event.venue}} / {{event.venue.city}}</h5>
+                        {% else %}
+                            <h5 class="card-title" style="text-transform: capitalize">Venue Removed</h5>
+                        {% endif %}
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item" style="text-transform: capitalize">
+                                {{event.event_date}}
+                            </li>
+                            <li class="nav-item" style="text-transform: capitalize">
+                                Attending: {{event.participants.count}}
+                            </li>
+                        </ul>
+                        <br>
+                        <a href="{% url 'show-event' event.id %}" class="btn btn-outline-secondary">Details...</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <br>
+    <center>
+    <div class="dropdown-center dropdown">
+        <button class="btn btn-secondary dropdown-toggle btn-sm" style="margin: 0.5rem;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Page {{event_list.number}}/{{event_list.paginator.num_pages}}
+        </button>
+        <ul class="dropdown-menu">
+            {% for i in range %}
+                <li><a class="dropdown-item" href="?page={{i}}&search_for={{ search_for|urlencode }}">{{i}}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% if event_list.has_previous == False and event_list.has_next == True %}
+        <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">&laquo First</a>
+        <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Prev</a>
+        <a href="?page={{event_list.next_page_number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Next</a>
+        <a href="?page={{event_list.paginator.num_pages}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Last &raquo</a>
+    {% elif event_list.has_next == False and event_list.has_previous == True %}
+        <a href="?page=1&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">&laquo First</a>
+        <a href="?page={{event_list.previous_page_number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Prev</a>
+        <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Next</a>
+        <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Last &raquo</a>
+    {% elif event_list.has_next == True and event_list.has_previous == True %}
+        <a href="?page=1&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">&laquo First</a>
+        <a href="?page={{event_list.previous_page_number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Prev</a>
+        <a href="?page={{event_list.next_page_number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Next</a>
+        <a href="?page={{event_list.paginator.num_pages}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Last &raquo</a>
+    {% else %}
+        <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">&laquo First</a>
+        <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Prev</a>
+        <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Next</a>
+        <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Last &raquo</a>
+    {% endif %}
+    </center>
+{% endblock%}

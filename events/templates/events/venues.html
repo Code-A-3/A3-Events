@@ -1,0 +1,81 @@
+{% extends "events/base.html" %}
+
+{% block content %}
+    {% if venue_list %}
+        <center>
+        <h1>Venues in: <kbd>{{search_for}}</kbd></h1>
+        <br>
+        </center>
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 g-4">
+            {% for venue in venue_list %}
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-header" style="text-transform: uppercase">
+                            {% if venue.owner%}
+                                <strong>{{venue}}</strong>
+                            {% else %}
+                                <strong>{{venue}} <kbd style="color: red;">ON HOLD!</kbd></strong>
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            <p class="card-title" style="text-transform: capitalize">{{venue.city}} / {{venue.province}}</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'show-venue' venue.id %}" class="btn btn-outline-secondary">Details...</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <br>
+        <center>
+        <div class="dropdown-center dropdown">
+            <button class="btn btn-secondary dropdown-toggle btn-sm" style="margin: 0.5rem;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Page {{venue_list.number}}/{{venue_list.paginator.num_pages}}
+            </button>
+            <ul class="dropdown-menu">
+                {% for i in range %}
+                    <li><a class="dropdown-item" href="?page={{i}}&search_for={{ search_for|urlencode }}">{{i}}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% if venue_list.has_previous == False and venue_list.has_next == True %}
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">&laquo First</a>
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Prev</a>
+            <a href="?page={{venue_list.next_page_number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Next</a>
+            <a href="?page={{venue_list.paginator.num_pages}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Last &raquo</a>
+        {% elif venue_list.has_next == False and venue_list.has_previous == True %}
+            <a href="?page=1&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">&laquo First</a>
+            <a href="?page={{venue_list.previous_page_number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Prev</a>
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Next</a>
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Last &raquo</a>
+        {% elif venue_list.has_next == True and venue_list.has_previous == True %}
+            <a href="?page=1&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">&laquo First</a>
+            <a href="?page={{venue_list.previous_page_number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Prev</a>
+            <a href="?page={{venue_list.next_page_number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Next</a>
+            <a href="?page={{venue_list.paginator.num_pages}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Last &raquo</a>
+        {% else %}
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">&laquo First</a>
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Prev</a>
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Next</a>
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Last &raquo</a>
+        {% endif %}
+        </center>
+    {% else %}
+        <center>
+        <h1>Check for Venues in:</h1>
+        <br>
+        <form class="d-flex" role="search" method=POST action="{% url 'list-venues' %}">
+            {% csrf_token %}
+            <input class="form-control me-2" type="search" placeholder="Name" aria-label="Search" name="search_for">
+            <button class="btn btn-outline-primary" type="submit">Search</button>
+        </form>
+        <br>
+        <form class="d-flex" role="search" method=POST action="{% url 'list-venues' %}">
+            {% csrf_token %}
+            <input class="form-control me-2" type="search" placeholder="City" aria-label="Search" name="search_for_city">
+            <button class="btn btn-outline-primary" type="submit">Search</button>
+        </form>
+        </center>
+    {% endif %}
+{% endblock%}

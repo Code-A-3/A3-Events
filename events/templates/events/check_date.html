@@ -1,0 +1,59 @@
+{% extends "events/base.html" %}
+
+{% block content %}
+    <center>
+    {% if events_list %}
+        <h1>Check Events on The Date:</h1>
+        <br>
+        <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4">
+            {% for event in events_list %}
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-header" style="text-transform: uppercase">
+                            {% if not event.Validity %}
+                                <strong>{{event}} <br><kbd style="color: red;">PASSED!</kbd></strong>
+                            {% elif event.manager == None or not event.venue.owner or not event.venue %}
+                                <strong>{{event}} <br><kbd style="color: red;">ON HOLD!</kbd></strong>
+                            {% else %}
+                                <strong>{{event}}</strong>
+                            {% endif %}
+                            {% if event.event_image %}
+                                <br>
+                                <img src={{event.event_image.url}} class="rounded">
+                                <br>
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            {% if event.venue %}
+                                <h5 class="card-title" style="text-transform: capitalize">{{event.venue}} / {{event.venue.city}}</h5>
+                            {% else %}
+                                <h5 class="card-title" style="text-transform: capitalize">Venue Removed</h5>
+                            {% endif %}
+                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                <li class="nav-item" style="text-transform: capitalize">
+                                    {{event.event_date}}
+                                </li>
+                                <li class="nav-item" style="text-transform: capitalize">
+                                    Attending: {{event.participants.count}}
+                                </li>
+                            </ul>
+                            <br>
+                            <a href="{% url 'show-event' event.id %}" class="btn btn-outline-secondary">Details...</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>  
+    {% else %}
+        <h1>Check Events on The Date:</h1>
+        <br>
+        <br>
+        <form method=POST action="{% url 'check-date' %}">
+            {% csrf_token %}
+            <input class="form-control me-2 w-25" type="month" name="check_for" min="{{min_date}}" max="{{max_date}}" style="min-width: 25rem;">
+            <br>
+            <button class="btn btn-outline-secondary" type="submit">Check</button>
+        </form>
+    {% endif %}
+    </center>
+{% endblock%}

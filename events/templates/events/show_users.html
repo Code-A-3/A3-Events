@@ -1,0 +1,71 @@
+{% extends "events/base.html" %}
+
+{% block content %}
+    <center>
+        {% if special == "owners" %}
+            <h1>Users with <kbd>Owner</kbd> privilege...</h1>
+        {% elif special == "managers" %}
+        <h1>Users with <kbd>Manager</kbd> privilege...</h1>
+        {% else %}
+            <h1>Users...</kbd></h1>
+        {% endif %}
+    </center>
+    <br>
+    {% if user_list %}
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 g-4">
+            {% for user in user_list %}
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-header" style="text-transform: uppercase">
+                            <strong>{{user}}</strong>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-title" style="text-transform: capitalize">Name: {{user.first_name}} {{user.last_name}}</p>
+                            <p class="card-title" style="text-transform: capitalize">Email: {{user.email}}</p>
+                        </div>
+                        <div class="card-footer">
+                            {% if special == "owners" %}
+                            <a href="{% url 'owner-venues' user.id %}" class="btn btn-outline-secondary">Venues...</a>
+                            {% endif %}
+                            <a href="/admin/auth/user/{{user.id}}/change/" class="btn btn-outline-primary">Edit...</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <br>
+        <center>
+        <div class="dropdown-center dropdown">
+            <button class="btn btn-secondary dropdown-toggle btn-sm" style="margin: 0.5rem;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Page {{user_list.number}}/{{user_list.paginator.num_pages}}
+            </button>
+            <ul class="dropdown-menu">
+                {% for i in range %}
+                    <li><a class="dropdown-item" href="?page={{i}}&search_for={{ search_for|urlencode }}">{{i}}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% if user_list.has_previous == False and user_list.has_next == True %}
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">&laquo First</a>
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Prev</a>
+            <a href="?page={{user_list.next_page_number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Next</a>
+            <a href="?page={{user_list.paginator.num_pages}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Last &raquo</a>
+        {% elif user_list.has_next == False and user_list.has_previous == True %}
+            <a href="?page=1&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">&laquo First</a>
+            <a href="?page={{user_list.previous_page_number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Prev</a>
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Next</a>
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Last &raquo</a>
+        {% elif user_list.has_next == True and user_list.has_previous == True %}
+            <a href="?page=1&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">&laquo First</a>
+            <a href="?page={{user_list.previous_page_number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Prev</a>
+            <a href="?page={{user_list.next_page_number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Next</a>
+            <a href="?page={{user_list.paginator.num_pages}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Last &raquo</a>
+        {% else %}
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">&laquo First</a>
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Prev</a>
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Next</a>
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Last &raquo</a>
+        {% endif %}
+        </center>
+    {% endif %}
+{% endblock%}

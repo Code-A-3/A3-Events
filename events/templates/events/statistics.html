@@ -1,0 +1,149 @@
+{% extends "events/base.html" %}
+
+{% block content %}
+    <center>
+        <h1>Site Statistics...</h1>
+        <br>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col" style="font-size: 1.5rem; background-color: #212529; color: white;">EVENTS</th>
+                    <th scope="col" style="font-size: 1.5rem; background-color: #212529; color: white;">VALUE</th>
+                    <th scope="col" class="text-end" style="font-size: 1.5rem; background-color: #212529; color: white; width: 1% !important;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">
+                        Upcoming Events
+                    </th>
+                    <td>
+                        {{upcoming_events}}
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'upcoming-events' %}" class="btn btn-outline-secondary">Show...</a>
+                    </td>
+                </tr>
+                <tr scope="row" 
+                    {% if on_hold_events > 0 %}
+                        class="table-danger"
+                    {% endif %}
+                >
+                    <th>
+                        On Hold Events
+                    </th>
+                    <td>
+                        {{on_hold_events}}
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'on-hold-events' %}" class="btn btn-outline-secondary">Show...</a>
+                    </td>
+                </tr>
+                <tr scope="row" 
+                    {% if pending_events > 0 %}
+                        class="table-danger"
+                    {% endif %}
+                >
+                    <th scope="row">
+                        Pending Events
+                    </th>
+                    <td>
+                        {{pending_events}}
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'admin-approve' %}" class="btn btn-outline-secondary">Show...</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        Past Events
+                    </th>
+                    <td>
+                        {{past_events}}
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'past-events' %}" class="btn btn-outline-secondary">Show...</a>
+                    </td>
+                </tr>
+            </tbody>
+            <thead>
+                <tr style="background-color: #007BFF;">
+                    <th scope="col" style="font-size: 1.5rem; background-color: #212529; color: white;">VENUES</th>
+                    <th scope="col" style="font-size: 1.5rem; background-color: #212529; color: white;">VALUE</th>
+                    <th scope="col" class="text-end" style="font-size: 1.5rem; background-color: #212529; color: white; width: 1% !important;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">
+                        Active Venues
+                    </th>
+                    <td>
+                        {{active_venues}}
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'active-venues' %}" class="btn btn-outline-secondary">Show...</a>
+                    </td>
+                </tr>
+                <tr scope="row" 
+                    {% if on_hold_venues > 0 %}
+                        class="table-danger"
+                    {% endif %}
+                >
+                    <th scope="row">
+                        On Hold Venues
+                    </th>
+                    <td>
+                        {{on_hold_venues}}
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'on-hold-venues' %}" class="btn btn-outline-secondary">Show...</a>
+                    </td>
+                </tr>
+            </tbody>
+            <thead>
+                <tr style="background-color: #007BFF;">
+                    <th scope="col" style="font-size: 1.5rem; background-color: #212529; color: white;">USERS</th>
+                    <th scope="col" style="font-size: 1.5rem; background-color: #212529; color: white;">VALUE</th>
+                    <th scope="col" class="text-end" style="font-size: 1.5rem; background-color: #212529; color: white; width: 1% !important;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">
+                        Venue Owners
+                    </th>
+                    <td>
+                        {{owner_users}}
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'venue-owners' %}" class="btn btn-outline-secondary">Show...</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        Event Managers
+                    </th>
+                    <td>
+                        {{manager_users}}
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'event-managers' %}" class="btn btn-outline-secondary">Show...</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        Standard Users
+                    </th>
+                    <td>
+                        {{normal_users}}
+                    </td>
+                    <td class="text-end">
+                        <a href="" class="btn btn-outline-secondary disabled">Show...</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </center>
+{% endblock%}
+

@@ -1,0 +1,23 @@
+{% extends "events/base.html" %}
+
+{% block content %}
+    <center>
+    <h1>Modify Event</h1>
+    {% if event.manager == None or not event.venue.owner or not event.venue %}
+        <strong>{{event}} <br><kbd style="color: red;">ON HOLD!</kbd></strong>
+    {% else %}
+        <strong>{{event}}</strong>
+    {% endif %}
+    </center>
+    <br>
+    <br>
+    <form action="" method="POST" enctype="multipart/form-data">
+        {%csrf_token%} <!-- standard application for hack security. learn this. -->
+        {{form.as_p}} <!-- {{form.as_p}}  this is to print a form. learn this. -->
+        <br>
+        <br>
+        <center>
+        <input type="submit" value="Submit" class="btn btn-primary">
+        </center>
+    </form>
+{% endblock%}

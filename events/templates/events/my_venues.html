@@ -1,0 +1,69 @@
+{% extends "events/base.html" %}
+
+{% block content %}
+    <center>
+        {% if special == "active" %}
+            <h1>Active Venues...</h1>
+        {% elif special == "passive" %}
+            <h1>Passive Venues...</h1>
+        {% elif special == "owner" %}
+            <h1>Venues of <kbd>{{look_owner_name}}</kbd></h1>
+        {% else %}
+            <h1>Venues of <kbd>{{user}}</kbd></h1>
+        {% endif %}
+    </center>
+    <br>
+    {% if venue_list %}
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 g-4">
+            {% for venue in venue_list %}
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-header" style="text-transform: uppercase">
+                            <strong>{{venue}}</strong>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-title" style="text-transform: capitalize">{{venue.city}} / {{venue.province}}</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'show-venue' venue.id %}" class="btn btn-outline-secondary">Details...</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <br>
+        <center>
+        <div class="dropdown-center dropdown">
+            <button class="btn btn-secondary dropdown-toggle btn-sm" style="margin: 0.5rem;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Page {{venue_list.number}}/{{venue_list.paginator.num_pages}}
+            </button>
+            <ul class="dropdown-menu">
+                {% for i in range %}
+                    <li><a class="dropdown-item" href="?page={{i}}&search_for={{ search_for|urlencode }}">{{i}}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% if venue_list.has_previous == False and venue_list.has_next == True %}
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">&laquo First</a>
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Prev</a>
+            <a href="?page={{venue_list.next_page_number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Next</a>
+            <a href="?page={{venue_list.paginator.num_pages}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Last &raquo</a>
+        {% elif venue_list.has_next == False and venue_list.has_previous == True %}
+            <a href="?page=1&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">&laquo First</a>
+            <a href="?page={{venue_list.previous_page_number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Prev</a>
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Next</a>
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Last &raquo</a>
+        {% elif venue_list.has_next == True and venue_list.has_previous == True %}
+            <a href="?page=1&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">&laquo First</a>
+            <a href="?page={{venue_list.previous_page_number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Prev</a>
+            <a href="?page={{venue_list.next_page_number}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Next</a>
+            <a href="?page={{venue_list.paginator.num_pages}}&search_for={{ search_for|urlencode }}" class="btn btn-secondary btn-sm" style="width: 5rem;">Last &raquo</a>
+        {% else %}
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">&laquo First</a>
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Prev</a>
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Next</a>
+            <a href="" class="btn btn-secondary btn-sm disabled" style="width: 5rem;">Last &raquo</a>
+        {% endif %}
+        </center>
+    {% endif %}
+{% endblock%}
